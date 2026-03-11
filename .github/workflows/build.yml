@@ -315,7 +315,7 @@ jobs:
           mkdir -p artifact
 
           # Main
-          bazel build --cxxopt=/std:c++20 -c opt --define tflite_with_xnnpack=true ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
+          bazel build --cxxopt=/std:c++20 --copt=/D_DISABLE_STDATOMIC -c opt --define tflite_with_xnnpack=true ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
           cp -f bazel-bin/tensorflow/lite/c/tensorflowlite_c.dll artifact
 
           mv artifact/ "${{ matrix.artifact_name }}-${{ env.VERSION }}"
