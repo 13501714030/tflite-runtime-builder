@@ -88,19 +88,19 @@ jobs:
           export ANDROID_SDK_HOME=$ANDROID_HOME
 
           # Main
-          bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
+          bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 --copt=/D_DISABLE_STDATOMIC ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
           cp -f bazel-bin/tensorflow/lite/c/libtensorflowlite_c.so artifact
           
           # GPU Delegate
-          bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --copt -Os --copt -DTFLITE_GPU_BINARY_RELEASE --copt -fvisibility=hidden --linkopt -s --strip always tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
+          bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 --copt=/D_DISABLE_STDATOMIC ${{ inputs.xnn_options }} --copt -Os --copt -DTFLITE_GPU_BINARY_RELEASE --copt -fvisibility=hidden --linkopt -s --strip always tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
           cp -f bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_delegate.so artifact
 
           # GL Delegate
-          bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --copt -Os --copt -DTFLITE_GPU_BINARY_RELEASE --copt -fvisibility=hidden --linkopt -s --strip always tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_gl.so
+          bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 --copt=/D_DISABLE_STDATOMIC ${{ inputs.xnn_options }} --copt -Os --copt -DTFLITE_GPU_BINARY_RELEASE --copt -fvisibility=hidden --linkopt -s --strip always tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_gl.so
           cp -f bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_gl.so artifact
 
           # NNAPI Delegate
-          # bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} tensorflow/lite/delegates/nnapi:nnapi_delegate
+          # bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 --copt=/D_DISABLE_STDATOMIC ${{ inputs.xnn_options }} tensorflow/lite/delegates/nnapi:nnapi_delegate
           # cp -f bazel-bin/tensorflow/lite/delegates/nnapi/libnnapi_delegate.so artifact
       - name: Build AAR
         if: ${{ matrix.config == 'android_fat_aar' }}
