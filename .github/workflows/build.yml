@@ -228,11 +228,11 @@ jobs:
           - config: macos
             cpu: x86_64
             artifact_name: tflite-runtime-osx-x86_64
-            vm: macos-13
+            vm: macos-15-intel
           - config: macos_arm64
             cpu: arm64
             artifact_name: tflite-runtime-osx-arm64
-            vm: macos-13
+            vm: macos-15
     env:
       HERMETIC_PYTHON_VERSION: 3.12    
     steps:
@@ -243,14 +243,6 @@ jobs:
           submodules: recursive
           github-server-url: https://github.com
       - uses: bazel-contrib/setup-bazel@0.15.0
-      - name: Install dependencies
-        if: ${{ matrix.vm != 'macos-15' }}
-        shell: bash
-        run: |
-          brew install llvm@17 \
-          && echo 'export PATH="/opt/homebrew/opt/llvm@17/bin:$PATH"' >> /Users/runner/.bash_profile \
-          && source /Users/runner/.bash_profile \
-          && which clang++
       - name: Build runtime
         shell: bash
         run: |
