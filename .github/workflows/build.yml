@@ -57,7 +57,7 @@ jobs:
       ANDROID_BUILD_TOOLS_VERSION: '31.0.0'
       CC: clang-17
       CXX: clang++-17
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -90,7 +90,7 @@ jobs:
           # Main
           bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
           cp -f bazel-bin/tensorflow/lite/c/libtensorflowlite_c.so artifact
-          
+
           # GPU Delegate
           bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --copt -Os --copt -DTFLITE_GPU_BINARY_RELEASE --copt -fvisibility=hidden --linkopt -s --strip always tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
           cp -f bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_delegate.so artifact
@@ -113,7 +113,7 @@ jobs:
           # Main
           bazel build -c opt --fat_apk_cpu=arm64-v8a,armeabi-v7a,x86_64 --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --host_crosstool_top=@bazel_tools//tools/cpp:toolchain --define=android_dexmerger_tool=d8_dexmerger --define=android_incremental_dexing_tool=d8_dexbuilder tensorflow/lite/java:tensorflow-lite
           cp -f bazel-bin/tensorflow/lite/java/tensorflow-lite.aar artifact
-          
+
           # GPU Delegate
           bazel build -c opt --fat_apk_cpu=arm64-v8a,armeabi-v7a,x86_64 --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --host_crosstool_top=@bazel_tools//tools/cpp:toolchain --define=android_dexmerger_tool=d8_dexmerger --define=android_incremental_dexing_tool=d8_dexbuilder tensorflow/lite/java:tensorflow-lite-gpu
           cp -f bazel-bin/tensorflow/lite/java/tensorflow-lite-gpu.aar artifact
@@ -140,7 +140,7 @@ jobs:
           - config: ios_x86_64
             artifact_name: tflite-runtime-ios-sim-x86_64
     env:
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -161,7 +161,7 @@ jobs:
           mv tensorflow/lite/swift/BUILD.apple tensorflow/lite/swift/BUILD
 
           mkdir -p artifact
-          
+
           # Main
           bazel build -c opt --config=${{ matrix.config }} ${{ inputs.xnn_options }} --cxxopt=--std=c++17 tensorflow/lite/ios:TensorFlowLiteC_framework
           unzip -o bazel-bin/tensorflow/lite/ios/TensorFlowLiteC_framework.zip -d artifact
@@ -169,7 +169,7 @@ jobs:
           # Metal Delegate
           bazel build -c opt --config=${{ matrix.config }} ${{ inputs.xnn_options }} --cxxopt=--std=c++17 tensorflow/lite/ios:TensorFlowLiteCMetal_framework
           unzip -o bazel-bin/tensorflow/lite/ios/TensorFlowLiteCMetal_framework.zip -d artifact
-          
+
           # CoreML Delegate
           bazel build -c opt --config=${{ matrix.config }} ${{ inputs.xnn_options }} --cxxopt=--std=c++17 tensorflow/lite/ios:TensorFlowLiteCCoreML_framework
           unzip -o bazel-bin/tensorflow/lite/ios/TensorFlowLiteCCoreML_framework.zip -d artifact
@@ -195,7 +195,7 @@ jobs:
     env:
       CC: gcc-12
       CXX: g++-12
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -239,7 +239,7 @@ jobs:
             artifact_name: tflite-runtime-osx-arm64
             vm: macos-15
     env:
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -282,7 +282,7 @@ jobs:
   build-macos-universal:
     needs: [build-macos]
     runs-on: macos-15
-    steps:  
+    steps:
       - uses: actions/download-artifact@v4
       - name: Build universal binary
         run: |
@@ -307,7 +307,7 @@ jobs:
             cpu: x86_64
             artifact_name: tflite-runtime-win-x86_64
     env:
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -336,7 +336,7 @@ jobs:
   release:
     needs: [build-android, build-ios, build-linux, build-macos-universal, build-windows]
     runs-on: ubuntu-latest
-    steps:  
+    steps:
       - uses: softprops/action-gh-release@v2
         if: ${{ inputs.release }}
         with:
