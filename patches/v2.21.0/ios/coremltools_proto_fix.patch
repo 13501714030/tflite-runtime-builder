@@ -1,0 +1,324 @@
+diff --git a/mlmodel/format/CategoricalMapping.proto b/mlmodel/format/CategoricalMapping.proto
+index dcb6eaf..d3b0c90 100644
+--- a/mlmodel/format/CategoricalMapping.proto
++++ b/mlmodel/format/CategoricalMapping.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/ClassConfidenceThresholding.proto b/mlmodel/format/ClassConfidenceThresholding.proto
+index 1732963..893d7b7 100644
+--- a/mlmodel/format/ClassConfidenceThresholding.proto
++++ b/mlmodel/format/ClassConfidenceThresholding.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/DataStructures.proto b/mlmodel/format/DataStructures.proto
+index 6cd2d1e..9d7946c 100644
+--- a/mlmodel/format/DataStructures.proto
++++ b/mlmodel/format/DataStructures.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "FeatureTypes.proto";
++import public "mlmodel/format/FeatureTypes.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/DictVectorizer.proto b/mlmodel/format/DictVectorizer.proto
+index 73f6a0c..c0c6c65 100644
+--- a/mlmodel/format/DictVectorizer.proto
++++ b/mlmodel/format/DictVectorizer.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/GLMClassifier.proto b/mlmodel/format/GLMClassifier.proto
+index 66f5bef..725a823 100644
+--- a/mlmodel/format/GLMClassifier.proto
++++ b/mlmodel/format/GLMClassifier.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/Gazetteer.proto b/mlmodel/format/Gazetteer.proto
+index 8dac370..17d5b13 100644
+--- a/mlmodel/format/Gazetteer.proto
++++ b/mlmodel/format/Gazetteer.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification.CoreMLModels;
+ 
+diff --git a/mlmodel/format/Imputer.proto b/mlmodel/format/Imputer.proto
+index ecedb01..4dfdd7b 100644
+--- a/mlmodel/format/Imputer.proto
++++ b/mlmodel/format/Imputer.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/ItemSimilarityRecommender.proto b/mlmodel/format/ItemSimilarityRecommender.proto
+index eb0292a..2fbd748 100644
+--- a/mlmodel/format/ItemSimilarityRecommender.proto
++++ b/mlmodel/format/ItemSimilarityRecommender.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/LinkedModel.proto b/mlmodel/format/LinkedModel.proto
+index 7b5263c..aa0f67f 100644
+--- a/mlmodel/format/LinkedModel.proto
++++ b/mlmodel/format/LinkedModel.proto
+@@ -5,7 +5,7 @@
+ 
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+-import public "Parameters.proto";
++import public "mlmodel/format/Parameters.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/Model.proto b/mlmodel/format/Model.proto
+index 4601447..4baa549 100644
+--- a/mlmodel/format/Model.proto
++++ b/mlmodel/format/Model.proto
+@@ -60,37 +60,37 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "VisionFeaturePrint.proto";
+-import public "AudioFeaturePrint.proto";
+-import public "TextClassifier.proto";
+-import public "WordTagger.proto";
+-import public "Gazetteer.proto";
+-import public "WordEmbedding.proto";
+-import public "ArrayFeatureExtractor.proto";
+-import public "BayesianProbitRegressor.proto";
+-import public "CategoricalMapping.proto";
+-import public "CustomModel.proto";
+-import public "DictVectorizer.proto";
+-import public "FeatureTypes.proto";
+-import public "FeatureVectorizer.proto";
+-import public "GLMRegressor.proto";
+-import public "GLMClassifier.proto";
+-import public "NearestNeighbors.proto";
+-import public "Identity.proto";
+-import public "Imputer.proto";
+-import public "MIL.proto";
+-import public "NeuralNetwork.proto";
+-import public "Normalizer.proto";
+-import public "OneHotEncoder.proto";
+-import public "Scaler.proto";
+-import public "NonMaximumSuppression.proto";
+-import public "SVM.proto";
+-import public "TreeEnsemble.proto";
+-import public "Parameters.proto";
+-import public "ItemSimilarityRecommender.proto";
+-import public "SoundAnalysisPreprocessing.proto";
+-import public "LinkedModel.proto";
+-import public "ClassConfidenceThresholding.proto";
++import public "mlmodel/format/VisionFeaturePrint.proto";
++import public "mlmodel/format/AudioFeaturePrint.proto";
++import public "mlmodel/format/TextClassifier.proto";
++import public "mlmodel/format/WordTagger.proto";
++import public "mlmodel/format/Gazetteer.proto";
++import public "mlmodel/format/WordEmbedding.proto";
++import public "mlmodel/format/ArrayFeatureExtractor.proto";
++import public "mlmodel/format/BayesianProbitRegressor.proto";
++import public "mlmodel/format/CategoricalMapping.proto";
++import public "mlmodel/format/CustomModel.proto";
++import public "mlmodel/format/DictVectorizer.proto";
++import public "mlmodel/format/FeatureTypes.proto";
++import public "mlmodel/format/FeatureVectorizer.proto";
++import public "mlmodel/format/GLMRegressor.proto";
++import public "mlmodel/format/GLMClassifier.proto";
++import public "mlmodel/format/NearestNeighbors.proto";
++import public "mlmodel/format/Identity.proto";
++import public "mlmodel/format/Imputer.proto";
++import public "mlmodel/format/MIL.proto";
++import public "mlmodel/format/NeuralNetwork.proto";
++import public "mlmodel/format/Normalizer.proto";
++import public "mlmodel/format/OneHotEncoder.proto";
++import public "mlmodel/format/Scaler.proto";
++import public "mlmodel/format/NonMaximumSuppression.proto";
++import public "mlmodel/format/SVM.proto";
++import public "mlmodel/format/TreeEnsemble.proto";
++import public "mlmodel/format/Parameters.proto";
++import public "mlmodel/format/ItemSimilarityRecommender.proto";
++import public "mlmodel/format/SoundAnalysisPreprocessing.proto";
++import public "mlmodel/format/LinkedModel.proto";
++import public "mlmodel/format/ClassConfidenceThresholding.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/NearestNeighbors.proto b/mlmodel/format/NearestNeighbors.proto
+index d7f2a60..150a577 100644
+--- a/mlmodel/format/NearestNeighbors.proto
++++ b/mlmodel/format/NearestNeighbors.proto
+@@ -8,8 +8,8 @@ option optimize_for = LITE_RUNTIME;
+ 
+ package CoreML.Specification;
+ 
+-import public "DataStructures.proto";
+-import public "Parameters.proto";
++import public "mlmodel/format/DataStructures.proto";
++import public "mlmodel/format/Parameters.proto";
+ 
+ /*
+  * A k-Nearest-Neighbor classifier
+diff --git a/mlmodel/format/NeuralNetwork.proto b/mlmodel/format/NeuralNetwork.proto
+index f2bdb68..d12406c 100644
+--- a/mlmodel/format/NeuralNetwork.proto
++++ b/mlmodel/format/NeuralNetwork.proto
+@@ -58,8 +58,8 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
+-import public "Parameters.proto";
++import public "mlmodel/format/DataStructures.proto";
++import public "mlmodel/format/Parameters.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/NonMaximumSuppression.proto b/mlmodel/format/NonMaximumSuppression.proto
+index 047f74b..03b7e83 100644
+--- a/mlmodel/format/NonMaximumSuppression.proto
++++ b/mlmodel/format/NonMaximumSuppression.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/OneHotEncoder.proto b/mlmodel/format/OneHotEncoder.proto
+index 4176399..ab2a342 100644
+--- a/mlmodel/format/OneHotEncoder.proto
++++ b/mlmodel/format/OneHotEncoder.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/Parameters.proto b/mlmodel/format/Parameters.proto
+index 044b2a9..e4d64f2 100644
+--- a/mlmodel/format/Parameters.proto
++++ b/mlmodel/format/Parameters.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/SVM.proto b/mlmodel/format/SVM.proto
+index d900e9a..856a05b 100644
+--- a/mlmodel/format/SVM.proto
++++ b/mlmodel/format/SVM.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/TextClassifier.proto b/mlmodel/format/TextClassifier.proto
+index d31113f..6ebe06d 100644
+--- a/mlmodel/format/TextClassifier.proto
++++ b/mlmodel/format/TextClassifier.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification.CoreMLModels;
+ 
+diff --git a/mlmodel/format/TreeEnsemble.proto b/mlmodel/format/TreeEnsemble.proto
+index 6428dc7..26def9e 100644
+--- a/mlmodel/format/TreeEnsemble.proto
++++ b/mlmodel/format/TreeEnsemble.proto
+@@ -25,7 +25,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification;
+ 
+diff --git a/mlmodel/format/WordEmbedding.proto b/mlmodel/format/WordEmbedding.proto
+index 349a068..532e282 100644
+--- a/mlmodel/format/WordEmbedding.proto
++++ b/mlmodel/format/WordEmbedding.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification.CoreMLModels;
+ 
+diff --git a/mlmodel/format/WordTagger.proto b/mlmodel/format/WordTagger.proto
+index c8452a4..b1a04ce 100644
+--- a/mlmodel/format/WordTagger.proto
++++ b/mlmodel/format/WordTagger.proto
+@@ -6,7 +6,7 @@
+ syntax = "proto3";
+ option optimize_for = LITE_RUNTIME;
+ 
+-import public "DataStructures.proto";
++import public "mlmodel/format/DataStructures.proto";
+ 
+ package CoreML.Specification.CoreMLModels;
+ 

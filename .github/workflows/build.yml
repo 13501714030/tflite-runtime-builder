@@ -148,7 +148,16 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
+      - uses: actions/checkout@v4
+        with:
+          path: tflite-runtime-builder
       - uses: bazel-contrib/setup-bazel@0.15.0
+      - name: Apply patches
+        run: |
+          if [[ "${{ inputs.ref }}" == "v2.21.0" ]]; then
+            cp tflite-runtime-builder/patches/v2.21.0/ios/coremltools_proto_fix.patch third_party/
+            git apply tflite-runtime-builder/patches/v2.21.0/ios/tensorflow_fix.patch
+          fi
       - name: Build runtime
         run: |
           mv tensorflow/lite/ios/BUILD.apple tensorflow/lite/ios/BUILD
@@ -242,7 +251,15 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
+      - uses: actions/checkout@v4
+        with:
+          path: tflite-runtime-builder
       - uses: bazel-contrib/setup-bazel@0.15.0
+      - name: Apply patches
+        run: |
+          if [[ "${{ inputs.ref }}" == "v2.21.0" ]]; then
+            git apply tflite-runtime-builder/patches/v2.21.0/macos/tensorflow_fix.patch
+          fi
       - name: Build runtime
         shell: bash
         run: |
