@@ -149,11 +149,6 @@ jobs:
           submodules: recursive
           github-server-url: https://github.com
       - uses: bazel-contrib/setup-bazel@0.15.0
-      - name: Revert build_bazel_apple_support update
-        # The below pr caused build failure. We can safely revert this change because it targets XCode 26.1 and later.
-        # https://github.com/tensorflow/tensorflow/pull/104948
-        run: |
-          git revert --no-commit 66dc287c65baa324f7337a0a348962f0d4b7256e
       - name: Build runtime
         run: |
           mv tensorflow/lite/ios/BUILD.apple tensorflow/lite/ios/BUILD
@@ -248,11 +243,6 @@ jobs:
           submodules: recursive
           github-server-url: https://github.com
       - uses: bazel-contrib/setup-bazel@0.15.0
-      - name: Revert build_bazel_apple_support update
-        # The below pr caused build failure. We can safely revert this change because it targets XCode 26.1 and later.
-        # https://github.com/tensorflow/tensorflow/pull/104948
-        run: |
-          git revert --no-commit 66dc287c65baa324f7337a0a348962f0d4b7256e
       - name: Build runtime
         shell: bash
         run: |
