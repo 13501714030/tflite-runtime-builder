@@ -54,7 +54,7 @@ jobs:
     env:
       ANDROID_SDK_API_LEVEL: 35
       ANDROID_NDK_API_LEVEL: 26
-      ANDROID_BUILD_TOOLS_VERSION: '31.0.0'
+      ANDROID_BUILD_TOOLS_VERSION: '35.0.0'
       CC: clang-17
       CXX: clang++-17
       HERMETIC_PYTHON_VERSION: 3.12
@@ -77,7 +77,7 @@ jobs:
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
-          ndk-version: r21b
+          ndk-version: r27d
           add-to-path: true
       - name: Build shared libraries
         if: ${{ matrix.config != 'android_fat_aar' }}
