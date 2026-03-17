@@ -68,9 +68,6 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
-      - uses: actions/checkout@v4
-        with:
-          path: tflite-runtime-builder
       - uses: bazel-contrib/setup-bazel@0.18.0
       - name: Install dependencies
         run: |
@@ -85,11 +82,6 @@ jobs:
         with:
           ndk-version: r29
           add-to-path: true
-      - name: Apply patches
-        run: |
-          if [[ "${{ inputs.ref }}" == "v2.21.0" ]]; then
-            git apply tflite-runtime-builder/patches/v2.21.0/android/tensorflow_fix.patch
-          fi
       - name: Build shared libraries
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
