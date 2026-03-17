@@ -25,6 +25,10 @@ on:
         description: "XNNPack build options"
         default: '--define=xnn_enable_arm_i8mm=false --define=xnn_enable_arm_bf16=false --define=xnn_enable_avx512amx=false --define=xnn_enable_avxvnniint8=false --define=xnn_enable_avxvnni=false --define=xnn_enable_avx512fp16=false'
         required: false
+      job:
+        description: "Name of the job to run. (for debugging)"
+        default: ''
+        required: false
 
 permissions:
   contents: write
@@ -38,6 +42,7 @@ env:
 
 jobs:
   build-android:
+    if: ${{ inputs.job == '' || inputs.job == 'build-android' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -106,6 +111,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-ios:
+    if: ${{ inputs.job == '' || inputs.job == 'build-ios' }}
     runs-on: macos-15
     strategy:
       fail-fast: false
@@ -165,6 +171,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-linux:
+    if: ${{ inputs.job == '' || inputs.job == 'build-linux' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -207,6 +214,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-macos:
+    if: ${{ inputs.job == '' || inputs.job == 'build-macos' }}
     runs-on: ${{ matrix.vm }}
     strategy:
       fail-fast: false
@@ -283,6 +291,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-windows:
+    if: ${{ inputs.job == '' || inputs.job == 'build-windows' }}
     runs-on: windows-2022
     strategy:
       fail-fast: false
@@ -319,6 +328,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   release:
+    if: ${{ inputs.job == '' }}
     needs: [build-android, build-ios, build-linux, build-macos-universal, build-windows]
     runs-on: ubuntu-latest
     steps:
