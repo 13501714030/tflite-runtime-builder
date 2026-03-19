@@ -1,0 +1,13 @@
+diff --git a/tensorflow/lite/delegates/gpu/BUILD b/tensorflow/lite/delegates/gpu/BUILD
+index db409272..19102e62 100644
+--- a/tensorflow/lite/delegates/gpu/BUILD
++++ b/tensorflow/lite/delegates/gpu/BUILD
+@@ -205,7 +205,7 @@ cc_binary(
+         "//conditions:default": [
+             "-fvisibility=hidden",
+         ],
+-    }),
++    }) + tflite_pagesize_linkopts(),
+     linkshared = 1,
+     linkstatic = 1,
+     tags = [
