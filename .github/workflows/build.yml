@@ -117,7 +117,7 @@ jobs:
           # bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} tensorflow/lite/delegates/nnapi:nnapi_delegate
           # cp -f bazel-bin/tensorflow/lite/delegates/nnapi/libnnapi_delegate.so artifact
       - name: Build AAR
-        if: ${{ matrix.config == 'android_fat_aar' }}
+        if: ${{ matrix.config == 'android_fat_aar' && inputs.ref != 'v2.21.0' }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
