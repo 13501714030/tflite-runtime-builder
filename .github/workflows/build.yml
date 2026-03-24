@@ -25,6 +25,10 @@ on:
         description: "XNNPack build options"
         default: '--define=xnn_enable_arm_i8mm=false --define=xnn_enable_arm_bf16=false --define=xnn_enable_avx512amx=false --define=xnn_enable_avxvnniint8=false --define=xnn_enable_avxvnni=false --define=xnn_enable_avx512fp16=false'
         required: false
+      job:
+        description: "Name of the job to run. (for debugging)"
+        default: ''
+        required: false
 
 permissions:
   contents: write
@@ -38,6 +42,7 @@ env:
 
 jobs:
   build-android:
+    if: ${{ inputs.job == '' || inputs.job == 'build-android' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -52,12 +57,13 @@ jobs:
           - config: android_fat_aar
             artifact_name: tflite-runtime-android-fat-aar
     env:
-      ANDROID_SDK_API_LEVEL: 31
-      ANDROID_NDK_API_LEVEL: 26
-      ANDROID_BUILD_TOOLS_VERSION: '31.0.0'
+      ANDROID_SDK_API_LEVEL: 35
+      ANDROID_NDK_API_LEVEL: 21
+      ANDROID_BUILD_TOOLS_VERSION: '35.0.0'
+      ANDROID_NDK_VERSION: 29
       CC: clang-17
       CXX: clang++-17
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,7 +71,10 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
-      - uses: bazel-contrib/setup-bazel@0.15.0
+      - uses: actions/checkout@v4
+        with:
+          path: tflite-runtime-builder
+      - uses: bazel-contrib/setup-bazel@0.18.0
       - name: Install dependencies
         run: |
           sudo apt-get remove -y gcc g++
@@ -77,8 +86,13 @@ jobs:
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
-          ndk-version: r21b
+          ndk-version: r29
           add-to-path: true
+      - name: Apply patches
+        run: |
+          if [[ "${{ inputs.ref }}" == "v2.21.0" ]]; then
+            git apply tflite-runtime-builder/patches/v2.21.0/android/tensorflow_fix.patch
+          fi
       - name: Build shared libraries
         if: ${{ matrix.config != 'android_fat_aar' }}
         env:
@@ -90,7 +104,7 @@ jobs:
           # Main
           bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
           cp -f bazel-bin/tensorflow/lite/c/libtensorflowlite_c.so artifact
-          
+
           # GPU Delegate
           bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --copt -Os --copt -DTFLITE_GPU_BINARY_RELEASE --copt -fvisibility=hidden --linkopt -s --strip always tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
           cp -f bazel-bin/tensorflow/lite/delegates/gpu/libtensorflowlite_gpu_delegate.so artifact
@@ -103,7 +117,7 @@ jobs:
           # bazel build -c opt --config=${{ matrix.config }} --cxxopt=--std=c++17 ${{ inputs.xnn_options }} tensorflow/lite/delegates/nnapi:nnapi_delegate
           # cp -f bazel-bin/tensorflow/lite/delegates/nnapi/libnnapi_delegate.so artifact
       - name: Build AAR
-        if: ${{ matrix.config == 'android_fat_aar' }}
+        if: ${{ matrix.config == 'android_fat_aar' && inputs.ref != 'v2.21.0' }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
@@ -113,7 +127,7 @@ jobs:
           # Main
           bazel build -c opt --fat_apk_cpu=arm64-v8a,armeabi-v7a,x86_64 --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --host_crosstool_top=@bazel_tools//tools/cpp:toolchain --define=android_dexmerger_tool=d8_dexmerger --define=android_incremental_dexing_tool=d8_dexbuilder tensorflow/lite/java:tensorflow-lite
           cp -f bazel-bin/tensorflow/lite/java/tensorflow-lite.aar artifact
-          
+
           # GPU Delegate
           bazel build -c opt --fat_apk_cpu=arm64-v8a,armeabi-v7a,x86_64 --cxxopt=--std=c++17 ${{ inputs.xnn_options }} --host_crosstool_top=@bazel_tools//tools/cpp:toolchain --define=android_dexmerger_tool=d8_dexmerger --define=android_incremental_dexing_tool=d8_dexbuilder tensorflow/lite/java:tensorflow-lite-gpu
           cp -f bazel-bin/tensorflow/lite/java/tensorflow-lite-gpu.aar artifact
@@ -128,6 +142,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-ios:
+    if: ${{ inputs.job == '' || inputs.job == 'build-ios' }}
     runs-on: macos-15
     strategy:
       fail-fast: false
@@ -140,7 +155,7 @@ jobs:
           - config: ios_x86_64
             artifact_name: tflite-runtime-ios-sim-x86_64
     env:
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -148,7 +163,16 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
-      - uses: bazel-contrib/setup-bazel@0.15.0
+      - uses: actions/checkout@v4
+        with:
+          path: tflite-runtime-builder
+      - uses: bazel-contrib/setup-bazel@0.18.0
+      - name: Apply patches
+        run: |
+          if [[ "${{ inputs.ref }}" == "v2.21.0" ]]; then
+            cp tflite-runtime-builder/patches/v2.21.0/ios/coremltools_proto_fix.patch third_party/
+            git apply tflite-runtime-builder/patches/v2.21.0/ios/tensorflow_fix.patch
+          fi
       - name: Build runtime
         run: |
           mv tensorflow/lite/ios/BUILD.apple tensorflow/lite/ios/BUILD
@@ -156,7 +180,7 @@ jobs:
           mv tensorflow/lite/swift/BUILD.apple tensorflow/lite/swift/BUILD
 
           mkdir -p artifact
-          
+
           # Main
           bazel build -c opt --config=${{ matrix.config }} ${{ inputs.xnn_options }} --cxxopt=--std=c++17 tensorflow/lite/ios:TensorFlowLiteC_framework
           unzip -o bazel-bin/tensorflow/lite/ios/TensorFlowLiteC_framework.zip -d artifact
@@ -164,7 +188,7 @@ jobs:
           # Metal Delegate
           bazel build -c opt --config=${{ matrix.config }} ${{ inputs.xnn_options }} --cxxopt=--std=c++17 tensorflow/lite/ios:TensorFlowLiteCMetal_framework
           unzip -o bazel-bin/tensorflow/lite/ios/TensorFlowLiteCMetal_framework.zip -d artifact
-          
+
           # CoreML Delegate
           bazel build -c opt --config=${{ matrix.config }} ${{ inputs.xnn_options }} --cxxopt=--std=c++17 tensorflow/lite/ios:TensorFlowLiteCCoreML_framework
           unzip -o bazel-bin/tensorflow/lite/ios/TensorFlowLiteCCoreML_framework.zip -d artifact
@@ -178,6 +202,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-linux:
+    if: ${{ inputs.job == '' || inputs.job == 'build-linux' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -190,7 +215,7 @@ jobs:
     env:
       CC: gcc-12
       CXX: g++-12
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -198,7 +223,7 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
-      - uses: bazel-contrib/setup-bazel@0.15.0
+      - uses: bazel-contrib/setup-bazel@0.18.0
       - name: Install dependencies
         run: |
           sudo apt-get remove -y gcc g++
@@ -220,6 +245,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-macos:
+    if: ${{ inputs.job == '' || inputs.job == 'build-macos' }}
     runs-on: ${{ matrix.vm }}
     strategy:
       fail-fast: false
@@ -228,13 +254,13 @@ jobs:
           - config: macos
             cpu: x86_64
             artifact_name: tflite-runtime-osx-x86_64
-            vm: macos-13
+            vm: macos-15-intel
           - config: macos_arm64
             cpu: arm64
             artifact_name: tflite-runtime-osx-arm64
-            vm: macos-13
+            vm: macos-15
     env:
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -242,15 +268,15 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
-      - uses: bazel-contrib/setup-bazel@0.15.0
-      - name: Install dependencies
-        if: ${{ matrix.vm != 'macos-15' }}
-        shell: bash
+      - uses: actions/checkout@v4
+        with:
+          path: tflite-runtime-builder
+      - uses: bazel-contrib/setup-bazel@0.18.0
+      - name: Apply patches
         run: |
-          brew install llvm@17 \
-          && echo 'export PATH="/opt/homebrew/opt/llvm@17/bin:$PATH"' >> /Users/runner/.bash_profile \
-          && source /Users/runner/.bash_profile \
-          && which clang++
+          if [[ "${{ inputs.ref }}" == "v2.21.0" ]]; then
+            git apply tflite-runtime-builder/patches/v2.21.0/macos/tensorflow_fix.patch
+          fi
       - name: Build runtime
         shell: bash
         run: |
@@ -280,7 +306,7 @@ jobs:
   build-macos-universal:
     needs: [build-macos]
     runs-on: macos-15
-    steps:  
+    steps:
       - uses: actions/download-artifact@v4
       - name: Build universal binary
         run: |
@@ -296,6 +322,7 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   build-windows:
+    if: ${{ inputs.job == '' || inputs.job == 'build-windows' }}
     runs-on: windows-2022
     strategy:
       fail-fast: false
@@ -305,7 +332,7 @@ jobs:
             cpu: x86_64
             artifact_name: tflite-runtime-win-x86_64
     env:
-      HERMETIC_PYTHON_VERSION: 3.12    
+      HERMETIC_PYTHON_VERSION: 3.12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -313,15 +340,16 @@ jobs:
           ref: ${{ inputs.ref }}
           submodules: recursive
           github-server-url: https://github.com
-      - uses: bazel-contrib/setup-bazel@0.15.0
+      - uses: bazel-contrib/setup-bazel@0.18.0
       - name: Build runtime
         shell: bash
         run: |
           mkdir -p artifact
 
           # Main
-          bazel build --cxxopt=/std:c++20 -c opt --define tflite_with_xnnpack=true ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
+          bazel build --cxxopt=/std:c++20 --conlyopt=/std:c11 --host_conlyopt=/std:c11 --conlyopt=/experimental:c11atomics --host_conlyopt=/experimental:c11atomics -c opt --define tflite_with_xnnpack=true ${{ inputs.xnn_options }} tensorflow/lite/c:tensorflowlite_c
           cp -f bazel-bin/tensorflow/lite/c/tensorflowlite_c.dll artifact
+          cp -f bazel-bin/tensorflow/lite/c/tensorflowlite_c.dll.if.lib artifact
 
           mv artifact/ "${{ matrix.artifact_name }}-${{ env.VERSION }}"
           7z a "${{ matrix.artifact_name }}-${{ env.VERSION }}.zip" "${{ matrix.artifact_name }}-${{ env.VERSION }}"
@@ -332,9 +360,10 @@ jobs:
           tag_name: ${{ env.VERSION }}
 
   release:
+    if: ${{ inputs.job == '' }}
     needs: [build-android, build-ios, build-linux, build-macos-universal, build-windows]
     runs-on: ubuntu-latest
-    steps:  
+    steps:
       - uses: softprops/action-gh-release@v2
         if: ${{ inputs.release }}
         with:
