@@ -361,7 +361,7 @@ jobs:
 
   release:
     if: ${{ inputs.job == '' }}
-    needs: [build-android, build-ios, build-linux, build-macos-universal, build-windows]
+    needs: [build-ios, build-linux, build-macos-universal, build-windows]
     runs-on: ubuntu-latest
     steps:
       - uses: softprops/action-gh-release@v2
